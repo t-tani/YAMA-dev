@@ -63,7 +63,7 @@ jobs:
     #     }
     #   shell: powershell
 
-    - name: Restore build directory from cache
+    - name: Cache build directory
       id: cache-build
       uses: actions/cache@v2
       with:
