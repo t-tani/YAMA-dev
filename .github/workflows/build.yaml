@@ -32,7 +32,7 @@ jobs:
 
     - name: Install ccache
       run: |
-        choco install ccache
+        choco install -y ccache
         (Get-Command ccache).Source
         ccache -V
     
@@ -69,7 +69,7 @@ jobs:
     #     }
     #   shell: powershell
 
-    - name: cache ccache
+    - name: Cache .ccache
       uses: actions/cache@v3
       id: cache-ccache
       with:
