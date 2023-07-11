@@ -14,6 +14,6 @@ cmake -DCMAKE_C_COMPILER="C:/Program Files/LLVM/bin/clang.exe" ^
       -DCMAKE_CXX_COMPILER="C:/Program Files/LLVM/bin/clang++.exe" ^
       -DCMAKE_RC_COMPILER="C:/Program Files/LLVM/bin/llvm-rc.exe" ^
       -DCMAKE_BUILD_TYPE=Release ^
-      -G Ninja .. > yama-cmake.log
+      -G Ninja ..
 ninja -v > yama-ninja.log
 cd ..\
