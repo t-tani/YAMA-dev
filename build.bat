@@ -14,7 +14,8 @@ echo y | del *
 
 @REM Build YAMA Scanner
 
-cmake -DCMAKE_BUILD_CXX_COMPILER_LAUNCHER="C:/ProgramData/chocolatey/bin/ccache.exe" ^
+cmake -DCMAKE_C_COMPILER_LAUNCHER="C:/ProgramData/chocolatey/bin/ccache.exe" ^
+      -DCMAKE_CXX_COMPILER_LAUNCHER="C:/ProgramData/chocolatey/bin/ccache.exe" ^
       -DCMAKE_C_COMPILER="C:/Program Files/LLVM/bin/clang.exe" ^
       -DCMAKE_CXX_COMPILER="C:/Program Files/LLVM/bin/clang++.exe" ^
       -DCMAKE_RC_COMPILER="C:/Program Files/LLVM/bin/llvm-rc.exe" ^
