@@ -9,6 +9,6 @@ ninja -t clean CMakeFiles/Yama.dir/rsrc/resources.rc.res
 ninja -v CMakeFiles/Yama.dir/rsrc/resources.rc.res
 
 @REM build YAMA scanner
-
+dir /s /b
 ninja
 cd ..\
