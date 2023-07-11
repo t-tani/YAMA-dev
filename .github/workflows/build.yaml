@@ -81,10 +81,16 @@ jobs:
           ./build.bat
         }
       shell: powershell
-    
+
     - name: Show build log
       run: |
-        type ${{ matrix.config.log }}
+        type "./build/yama-cmake.log"
+      shell: powershell
+
+
+    - name: Show build log
+      run: |
+        type "./build/yama-ninja.log"
       shell: powershell
 
     - name: Archive build results
