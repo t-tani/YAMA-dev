@@ -18,7 +18,8 @@ jobs:
         config:
           - {
             name: "Build debug mode YAMA binary",
-            pe: "YAMA.exe"
+            pe: "YAMA.exe",
+            log: "./yama-ninja.log",
           }
     steps:
     - name: Check out repository
@@ -79,6 +80,11 @@ jobs:
           Write-Host "No cached bulid directory. Start build process."
           ./build.bat
         }
+      shell: powershell
+    
+    - name: Show build log
+      run: |
+        type ${{ matrix.config.log }}
       shell: powershell
 
     - name: Archive build results
