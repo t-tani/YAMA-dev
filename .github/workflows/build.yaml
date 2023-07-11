@@ -81,12 +81,12 @@ jobs:
         }
       shell: powershell
 
-    - name: Show build log
+    - name: Show cmake log
       run: |
         type "./build/yama-cmake.log"
       shell: powershell
 
-    - name: Show build log
+    - name: Show ninja build log
       run: |
         type "./build/yama-ninja.log"
       shell: powershell
