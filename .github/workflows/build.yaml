@@ -73,11 +73,11 @@ jobs:
     - name: Build YAMA Scanner
       run: |
         if ("${{ steps.cache-build.outputs.cache-hit }}" -eq 'true') {
-          Write-Host "Using cached build directory. Start yara-update-build."
+          Write-Host "Using cached build directory. Start yara-update-build process."
           ./yara-update-build.bat
         } else {
-          Write-Host "No cached bulid directory. Start clean-build."
-          ./clean-build.bat
+          Write-Host "No cached bulid directory. Start build process."
+          ./build.bat
         }
       shell: powershell
 
