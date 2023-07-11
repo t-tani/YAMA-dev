@@ -17,9 +17,8 @@ jobs:
       matrix:
         config:
           - {
-            name: "Build debug mode YAMA binary",
+            name: "Build YAMA Scanner",
             pe: "YAMA.exe",
-            log: "./yama-ninja.log",
           }
     steps:
     - name: Check out repository
