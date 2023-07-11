@@ -22,17 +22,23 @@ jobs:
           }
     steps:
     - name: Check out repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         fetch-depth: 1
         submodules: 'recursive'
 
     - name: Install ninja build
       uses: seanmiddleditch/gha-setup-ninja@master
+
+    - name: Install ccache
+      run: |
+        choco install ccache
+        (Get-Command ccache).Source
+        ccache -V
     
     - name: Cache LLVM and Clang
       id: cache-llvm
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: |
           C:/Program Files/LLVM
@@ -63,22 +69,23 @@ jobs:
     #     }
     #   shell: powershell
 
-    - name: Cache build directory
-      id: cache-build
-      uses: actions/cache@v2
+    - name: cache ccache
+      uses: actions/cache@v3
+      id: cache-ccache
       with:
-        path: build/
-        key: ${{ runner.os }}-build-${{ hashFiles('CmakeLists.txt') }}-${{ hashFiles('dependencies/yara/CMakeLists.txt') }}
+        path: |
+          .ccache
+        key: ccache-${{ hashFiles('**/*.cpp', '**/*.hpp') }}
+        restore-keys: ccache-
 
     - name: Build YAMA Scanner
       run: |
         if ("${{ steps.cache-build.outputs.cache-hit }}" -eq 'true') {
-          Write-Host "Using cached build directory. Start yara-update-build process."
-          ./yara-update-build.bat
+          Write-Host "Using .ccache directory. Start build process."
         } else {
-          Write-Host "No cached bulid directory. Start build process."
-          ./build.bat
+          Write-Host "No cache. Start build process."
         }
+        ./build.bat
       shell: powershell
 
     - name: Show ninja build log
@@ -91,7 +98,7 @@ jobs:
         .\build\Yama.exe -V
 
     - name: Archive build results
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: ${{ matrix.config.pe }}
         path: .\build\Yama.exe
