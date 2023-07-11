@@ -7,14 +7,6 @@ set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded")
 
 add_definitions(-v) # verbose logs.
 
-# Build libyara
-# =====================================================
-add_subdirectory(dependencies/yara)
-
-# Build spdlog
-# =====================================================
-add_subdirectory(dependencies/spdlog)
-
 # THE LIST OF SORUCE FILES
 # =====================================================
 
@@ -62,9 +54,17 @@ set(rsrc
     rsrc/version.h
 )
 
-# Add Yama Executable file to project
+# Add Yama to build targets
 # ==============================================================
 add_executable(Yama ${srcs} ${hdrs} ${rsrc})
+
+# Add libyara to build targets
+# =====================================================
+add_subdirectory(dependencies/yara)
+
+# Add spdlog::spdlog to build targets
+# =====================================================
+add_subdirectory(dependencies/spdlog)
 
 # Add 3rd-party libraries to include directories
 # ==============================================================
@@ -95,5 +95,5 @@ target_compile_options(Yama PRIVATE
 )
 
 target_link_libraries(Yama
-                      ${CMAKE_CURRENT_SOURCE_DIR}/build/dependencies/yara/libyara.lib
-                      ${CMAKE_CURRENT_SOURCE_DIR}/build/dependencies/spdlog/spdlogd.lib)
+                      libyara
+                      spdlog::spdlog)
