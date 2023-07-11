@@ -18,6 +18,7 @@ jobs:
         config:
           - {
             name: "Build debug mode YAMA binary",
+            pe: "YAMA.exe"
           }
     steps:
     - name: Check out repository
@@ -43,26 +44,26 @@ jobs:
         version: "14.0.6"
         cached: ${{ steps.cache-llvm.outputs.cache-hit }}
 
-    - name: Cache Eventlog manifest
-      id: cache-evtx-manifest
-      uses: actions/cache@v2
-      with:
-        path: |
-          rsrc/eventlog/Yama.Events.dll
-        key: ${{ runner.os }}-evtx-manifest-${{ hashFiles('rsrc/eventlog/Yama.Events.man') }}-${{ hashFiles('rsrc/eventlog/Yama.Events.h') }}
+    # - name: Cache Eventlog manifest
+    #   id: cache-evtx-manifest
+    #   uses: actions/cache@v2
+    #   with:
+    #     path: |
+    #       rsrc/eventlog/Yama.Events.dll
+    #     key: ${{ runner.os }}-evtx-manifest-${{ hashFiles('rsrc/eventlog/Yama.Events.man') }}-${{ hashFiles('rsrc/eventlog/Yama.Events.h') }}
     
-    - name: Run commands in specific directory
-      run: |
-        if ("${{ steps.cache-evtx-manifest.outputs.cache-hit }}" -eq 'true') {
-          Write-Host "Using cached rsrc/eventlog/Yama.Events.dll"
-        } else {
-          Write-Host "No cached rsrc/eventlog/Yama.Events.dll Start building..."
-          cd rsrc/eventlog
-          ./build.bat
-        }
-      shell: powershell
+    # - name: Build EVTX manifest dll
+    #   run: |
+    #     if ("${{ steps.cache-evtx-manifest.outputs.cache-hit }}" -eq 'true') {
+    #       Write-Host "Using cached rsrc/eventlog/Yama.Events.dll"
+    #     } else {
+    #       Write-Host "No cached rsrc/eventlog/Yama.Events.dll Start building..."
+    #       cd rsrc/eventlog
+    #       ./build.bat
+    #     }
+    #   shell: powershell
 
-    - name: Cache build
+    - name: Restore build directory from cache
       id: cache-build
       uses: actions/cache@v2
       with:
@@ -79,3 +80,9 @@ jobs:
           ./clean-build.bat
         }
       shell: powershell
+
+    - name: Archive build results
+      uses: actions/upload-artifact@v2
+      with:
+        name: ${{ matrix.config.pe }}
+        path: .\build\Yama.exe
