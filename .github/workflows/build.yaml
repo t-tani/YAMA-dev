@@ -1,0 +1,81 @@
+name: "yama-build"
+
+on:
+  push:
+    branches:
+      - "gh-actions"
+  pull_request:
+    branches:
+      - "gh-actions"
+
+jobs:
+  build:
+    name: ${{ matrix.config.name }}
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {
+            name: "Build debug mode YAMA binary",
+          }
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 1
+        submodules: 'recursive'
+
+    - name: Install ninja build
+      uses: seanmiddleditch/gha-setup-ninja@master
+    
+    - name: Cache LLVM and Clang
+      id: cache-llvm
+      uses: actions/cache@v2
+      with:
+        path: |
+          C:/Program Files/LLVM
+        key: llvm-14.0.6
+    
+    - name: Install LLVM and Clang
+      uses: KyleMayes/install-llvm-action@v1
+      with:
+        version: "14.0.6"
+        cached: ${{ steps.cache-llvm.outputs.cache-hit }}
+
+    - name: Cache Eventlog manifest
+      id: cache-evtx-manifest
+      uses: actions/cache@v2
+      with:
+        path: |
+          rsrc/eventlog/Yama.Events.dll
+        key: ${{ runner.os }}-evtx-manifest-${{ hashFiles('rsrc/eventlog/Yama.Events.man') }}-${{ hashFiles('rsrc/eventlog/Yama.Events.h') }}
+    
+    - name: Run commands in specific directory
+      run: |
+        if ("${{ steps.cache-evtx-manifest.outputs.cache-hit }}" -eq 'true') {
+          Write-Host "Using cached rsrc/eventlog/Yama.Events.dll"
+        } else {
+          Write-Host "No cached rsrc/eventlog/Yama.Events.dll Start building..."
+          cd rsrc/eventlog
+          ./build.bat
+        }
+      shell: powershell
+
+    - name: Cache build
+      id: cache-build
+      uses: actions/cache@v2
+      with:
+        path: build/
+        key: ${{ runner.os }}-build-${{ hashFiles('CmakeLists.txt') }}-${{ hashFiles('dependencies/yara/CMakeLists.txt') }}
+
+    - name: Build YAMA Scanner
+      run: |
+        if ("${{ steps.cache-build.outputs.cache-hit }}" -eq 'true') {
+          Write-Host "Using cached build directory. Start yara-update-build."
+          ./yara-update-build.bat
+        } else {
+          Write-Host "No cached bulid directory. Start clean-build."
+          ./clean-build.bat
+        }
+      shell: powershell
